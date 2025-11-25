@@ -50,7 +50,7 @@ function App() {
 	);
 
 	// Fixed drawer height to fit all content without scrolling
-	const drawerHeight = 390; // Fixed height in pixels to fit presets + spinners + start button + 50px bottom padding
+	const drawerHeight = 390;
 
 	// Store alarm stop function
 	const stopAlarmRef = useRef<(() => void) | null>(null);
@@ -399,7 +399,10 @@ function App() {
 					isDrawerOpen ? "border-white/10" : "border-white/0",
 				)}
 				style={{
-					height: isDrawerOpen ? `${drawerHeight}px` : "3px",
+					// Use (100vh - 100dvh) to account for iOS Safari toolbar height dynamically
+					height: isDrawerOpen
+						? `calc(${drawerHeight}px + env(safe-area-inset-bottom) + (100vh - 100dvh))`
+						: `calc(3px + (100vh - 100dvh))`,
 				}}
 			>
 				{/* Full-width grab handle - larger touch target on mobile */}

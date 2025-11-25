@@ -20,6 +20,11 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* iOS Safari uses html background for safe area edges */
+  html {
+    background: #0a0a0f;
+  }
+
   body {
     font-family: system-ui, -apple-system, sans-serif;
     background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);

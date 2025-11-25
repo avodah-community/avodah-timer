@@ -95,7 +95,7 @@ function App() {
 	});
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 	const [isDrawerOpen, setIsDrawerOpen] = useState(() => !hasTimeParam());
-	const [hasTimeSet, setHasTimeSet] = useState(() => hasTimeParam());
+	const [hasTimeSet, setHasTimeSet] = useState(true);
 
 	// Ensure URL has all params on mount (fills in defaults if missing)
 	const hasAppliedURLParams = useRef(false);

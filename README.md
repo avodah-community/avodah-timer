@@ -6,7 +6,6 @@ A beautiful, shareable countdown timer for the web. Set a timer, share the URL, 
 
 - **Shareable URLs** — Timer state is stored in the URL, making it easy to share specific countdowns
 - **Customizable display** — Choose from multiple colors and sizes
-- **Notifications** — Get browser notifications when the timer completes
 - **Audio alerts** — Alarm sound plays on completion
 - **Keyboard shortcuts** — Press `Space` to start/pause
 

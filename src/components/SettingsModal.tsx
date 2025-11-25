@@ -1,4 +1,4 @@
-import { Bell, BellOff, X } from "lucide-react";
+import { X } from "lucide-react";
 import { type DisplaySize, SIZE_OPTIONS } from "@/constants";
 import { COLOR_OPTIONS, type DisplayColor } from "@/utils/colors";
 import { Button } from "./ui/button";
@@ -10,13 +10,9 @@ interface SettingsModalProps {
 	displayColor: DisplayColor;
 	displaySize: DisplaySize;
 	showHours: boolean;
-	notificationsEnabled: boolean;
-	notificationPermission: NotificationPermission;
 	onColorChange: (color: DisplayColor) => void;
 	onSizeChange: (size: DisplaySize) => void;
 	onShowHoursChange: (show: boolean) => void;
-	onNotificationsChange: (enabled: boolean) => void;
-	onRequestNotificationPermission: () => void;
 }
 
 export function SettingsModal({
@@ -25,13 +21,9 @@ export function SettingsModal({
 	displayColor,
 	displaySize,
 	showHours,
-	notificationsEnabled,
-	notificationPermission,
 	onColorChange,
 	onSizeChange,
 	onShowHoursChange,
-	onNotificationsChange,
-	onRequestNotificationPermission,
 }: SettingsModalProps) {
 	if (!isOpen) return null;
 
@@ -150,96 +142,6 @@ export function SettingsModal({
 								/>
 							</div>
 						</button>
-					</div>
-
-					<div className="space-y-3">
-						<span className="text-sm font-medium text-gray-300 block">
-							Browser Notifications
-						</span>
-						<div className="space-y-3">
-							{notificationPermission === "denied" ? (
-								<div className="p-4 rounded-lg border-2 border-red-500/30 bg-red-500/10">
-									<div className="flex items-center gap-3 mb-2">
-										<BellOff className="h-5 w-5 text-red-400" />
-										<span className="text-sm font-medium text-red-300">
-											Notifications Blocked
-										</span>
-									</div>
-									<p className="text-xs text-gray-400 mb-3">
-										You've blocked notifications. To enable them, click the lock
-										icon in your browser's address bar and allow notifications
-										for this site.
-									</p>
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={onRequestNotificationPermission}
-										className="w-full border-red-500/30 text-red-300 hover:bg-red-500/10"
-									>
-										Try Again
-									</Button>
-								</div>
-							) : notificationPermission === "default" ? (
-								<div className="p-4 rounded-lg border-2 border-gray-700 bg-gray-800/50">
-									<div className="flex items-center gap-3 mb-2">
-										<Bell className="h-5 w-5 text-gray-400" />
-										<span className="text-sm font-medium text-gray-300">
-											Enable Notifications
-										</span>
-									</div>
-									<p className="text-xs text-gray-400 mb-3">
-										Get notified when your timer completes.
-									</p>
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={onRequestNotificationPermission}
-										className="w-full border-cyan-400/30 text-cyan-300 hover:bg-cyan-400/10"
-									>
-										Enable Notifications
-									</Button>
-								</div>
-							) : (
-								<button
-									type="button"
-									onClick={() => onNotificationsChange(!notificationsEnabled)}
-									className={`
-                                        w-full flex items-center justify-between p-3 sm:p-4 rounded-lg border-2 transition-all touch-manipulation
-                                        ${
-																					notificationsEnabled
-																						? "border-cyan-400 bg-cyan-400/10"
-																						: "border-gray-700 bg-gray-800/50 hover:border-gray-600"
-																				}
-                                    `}
-								>
-									<div className="flex items-center gap-3">
-										{notificationsEnabled ? (
-											<Bell className="h-5 w-5 text-cyan-400" />
-										) : (
-											<BellOff className="h-5 w-5 text-gray-400" />
-										)}
-										<span className="text-sm text-gray-300">
-											{notificationsEnabled
-												? "Notifications On"
-												: "Notifications Off"}
-										</span>
-									</div>
-									<div
-										className={`
-                                            w-11 h-6 rounded-full transition-all relative
-                                            ${notificationsEnabled ? "bg-cyan-400" : "bg-gray-600"}
-                                        `}
-									>
-										<div
-											className={`
-                                                absolute top-1 w-4 h-4 rounded-full bg-white transition-all
-                                                ${notificationsEnabled ? "left-6" : "left-1"}
-                                            `}
-										/>
-									</div>
-								</button>
-							)}
-						</div>
 					</div>
 				</CardContent>
 			</Card>

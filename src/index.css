@@ -49,6 +49,13 @@
   }
 }
 
+/* PWA standalone mode - add top safe area padding */
+@media (display-mode: standalone) {
+  #root {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
 @layer utilities {
   .animate-fade-in {
     animation: fade-in 0.6s ease-out forwards;

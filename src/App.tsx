@@ -6,7 +6,6 @@ import { TimerControls } from "./components/TimerControls";
 import { TimerDisplay, useViewportScale } from "./components/TimerDisplay";
 import { Button } from "./components/ui/button";
 import { type DisplaySize, SIZE_SCALE } from "./constants";
-import { useNotifications } from "./hooks/useNotifications";
 import { useSettings } from "./hooks/useSettings";
 import { useTimer } from "./hooks/useTimer";
 import { cn } from "./lib/utils";
@@ -27,9 +26,7 @@ function calculateTimerMargin(
 }
 
 function App() {
-	const { settings, updateSettings, isLoaded } = useSettings();
-	const { permission, requestPermission, sendNotification } =
-		useNotifications();
+	const { isLoaded } = useSettings();
 
 	// Display color, size, and hours toggle are derived from URL (not localStorage)
 	const [displayColor, setDisplayColor] = useState<DisplayColor>(
@@ -54,22 +51,6 @@ function App() {
 
 	// Store alarm stop function
 	const stopAlarmRef = useRef<(() => void) | null>(null);
-
-	// Request notification permission on first load
-	const hasRequestedPermission = useRef(false);
-	useEffect(() => {
-		if (hasRequestedPermission.current) return;
-		hasRequestedPermission.current = true;
-
-		console.log("[App] Checking notification permission on load:", permission);
-		// Only request if permission hasn't been decided yet
-		if (permission === "default") {
-			console.log("[App] Requesting notification permission on first load...");
-			requestPermission();
-		} else {
-			console.log("[App] Notification permission already set to:", permission);
-		}
-	}, [permission, requestPermission]);
 
 	// Helper function to get base time from URL
 	const getBaseTimeFromURL = useCallback((): number => {
@@ -109,28 +90,9 @@ function App() {
 	}, []);
 
 	const handleComplete = useCallback(() => {
-		console.log("[Timer] Timer completed! handleComplete called");
-		console.log("[Timer] Notification settings:", {
-			notificationsEnabled: settings.notificationsEnabled,
-			permission: permission,
-		});
-
 		// Start looping alarm - store stop function for later dismissal
 		stopAlarmRef.current = startCompletionAlarm();
-
-		if (settings.notificationsEnabled) {
-			console.log("[Timer] Attempting to send notification...");
-			sendNotification("Timer Complete! ⏰", {
-				body: "Your Avodah Timer has finished.",
-				tag: "timer-complete",
-				requireInteraction: true,
-			});
-		} else {
-			console.log(
-				"[Timer] Notifications are disabled in settings, skipping notification",
-			);
-		}
-	}, [settings.notificationsEnabled, sendNotification, permission]);
+	}, []);
 
 	// Initialize timer from URL on mount
 	const baseTimeFromURL = getBaseTimeFromURL();
@@ -249,13 +211,6 @@ function App() {
 		[getBaseTimeFromURL, displayColor, displaySize],
 	);
 
-	const handleNotificationsChange = useCallback(
-		(enabled: boolean) => {
-			updateSettings({ notificationsEnabled: enabled });
-		},
-		[updateSettings],
-	);
-
 	const handleReset = useCallback(() => {
 		// Stop any playing alarm
 		if (stopAlarmRef.current) {
@@ -310,9 +265,10 @@ function App() {
 					size="icon"
 					onClick={handleShare}
 					className={cn(
-						"fixed top-2 left-2 h-12 w-12 sm:top-3 sm:left-3 sm:h-14 sm:w-14 md:top-4 md:left-4 md:h-[72px] md:w-[72px] text-gray-300 hover:text-white z-50 transition-opacity duration-300",
+						"fixed left-2 h-12 w-12 sm:left-3 sm:h-14 sm:w-14 md:left-4 md:h-[72px] md:w-[72px] text-gray-300 hover:text-white z-50 transition-opacity duration-300",
 						timer.isRunning && "opacity-40 hover:opacity-100",
 					)}
+					style={{ top: "max(0.5rem, env(safe-area-inset-top))" }}
 				>
 					{showCopied ? (
 						<Check className="h-6 w-6 sm:h-7 sm:w-7 md:h-10 md:w-10" />
@@ -325,9 +281,10 @@ function App() {
 					size="icon"
 					onClick={() => setIsSettingsOpen(true)}
 					className={cn(
-						"fixed top-2 right-2 h-12 w-12 sm:top-3 sm:right-3 sm:h-14 sm:w-14 md:top-4 md:right-4 md:h-[72px] md:w-[72px] text-gray-300 hover:text-white z-50 transition-opacity duration-300",
+						"fixed right-2 h-12 w-12 sm:right-3 sm:h-14 sm:w-14 md:right-4 md:h-[72px] md:w-[72px] text-gray-300 hover:text-white z-50 transition-opacity duration-300",
 						timer.isRunning && "opacity-40 hover:opacity-100",
 					)}
+					style={{ top: "max(0.5rem, env(safe-area-inset-top))" }}
 				>
 					<Settings className="h-6 w-6 sm:h-7 sm:w-7 md:h-10 md:w-10" />
 				</Button>
@@ -462,13 +419,9 @@ function App() {
 				displayColor={displayColor}
 				displaySize={displaySize}
 				showHours={showHours}
-				notificationsEnabled={settings.notificationsEnabled}
-				notificationPermission={permission}
 				onColorChange={handleColorChange}
 				onSizeChange={handleSizeChange}
 				onShowHoursChange={handleShowHoursChange}
-				onNotificationsChange={handleNotificationsChange}
-				onRequestNotificationPermission={requestPermission}
 			/>
 		</div>
 	);

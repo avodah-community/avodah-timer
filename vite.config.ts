@@ -11,4 +11,7 @@ export default defineConfig({
 			"@": path.resolve(__dirname, "./src"),
 		},
 	},
+	server: {
+		host: true, // Expose on network IP for testing on other devices
+	},
 });

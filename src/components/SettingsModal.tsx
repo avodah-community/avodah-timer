@@ -1,8 +1,30 @@
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { type DisplaySize, SIZE_OPTIONS } from "@/constants";
 import { COLOR_OPTIONS, type DisplayColor } from "@/utils/colors";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+
+function useBuildInfo() {
+	const [buildTime, setBuildTime] = useState<string | null>(null);
+
+	useEffect(() => {
+		fetch("/build-info.json")
+			.then((res) => res.json())
+			.then((data) => setBuildTime(data.buildTime))
+			.catch(() => setBuildTime(null));
+	}, []);
+
+	if (!buildTime) return "Development";
+
+	return new Date(buildTime).toLocaleString(undefined, {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+		hour: "numeric",
+		minute: "2-digit",
+	});
+}
 
 interface SettingsModalProps {
 	isOpen: boolean;
@@ -25,6 +47,8 @@ export function SettingsModal({
 	onSizeChange,
 	onShowHoursChange,
 }: SettingsModalProps) {
+	const buildInfo = useBuildInfo();
+
 	if (!isOpen) return null;
 
 	return (
@@ -142,6 +166,12 @@ export function SettingsModal({
 								/>
 							</div>
 						</button>
+					</div>
+
+					<div className="pt-4 border-t border-gray-700">
+						<span className="text-xs text-gray-500">
+							Last build: {buildInfo}
+						</span>
 					</div>
 				</CardContent>
 			</Card>
